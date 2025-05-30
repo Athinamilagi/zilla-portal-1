@@ -1,0 +1,12 @@
+<div class="card" [style.--card-color]="color">
+  <div class="card-header" *ngIf="title">
+    <div class="card-title-container">
+      <span class="material-icons" *ngIf="icon">{{ icon }}</span>
+      <h3 class="card-title">{{ title }}</h3>
+    </div>
+    <p class="card-subtitle" *ngIf="subtitle">{{ subtitle }}</p>
+  </div>
+  <div class="card-content">
+    <ng-content></ng-content>
+  </div>
+</div>

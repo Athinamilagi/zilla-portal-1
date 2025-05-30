@@ -1,0 +1,95 @@
+.login-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.login-card {
+  max-width: 420px;
+  width: 90%;
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+}
+
+.login-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #2d3748;
+  text-align: center;
+}
+
+.login-subtitle {
+  color: #718096;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.full-width {
+  width: 100%;
+}
+
+::ng-deep .mat-mdc-form-field {
+  .mat-mdc-form-field-flex {
+    background-color: #f7fafc;
+    border-radius: 8px;
+  }
+
+  .mat-mdc-form-field-outline {
+    border-radius: 8px;
+  }
+
+  .mat-mdc-text-field-wrapper {
+    background-color: transparent;
+  }
+}
+
+.login-button {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.login-button:hover:not([disabled]) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.login-button:active:not([disabled]) {
+  transform: translateY(0);
+}
+
+.login-button mat-icon {
+  margin-right: 8px;
+}
+
+.mat-mdc-form-field-icon-prefix {
+  color: #718096;
+}
+
+@media (max-width: 480px) {
+  .login-card {
+    padding: 1.5rem;
+  }
+
+  .login-title {
+    font-size: 24px;
+  }
+} 

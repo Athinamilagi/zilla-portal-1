@@ -1,0 +1,29 @@
+<div class="login-container">
+  <mat-card class="login-card">
+    <mat-card-header>
+      <mat-card-title class="login-title">Welcome Back</mat-card-title>
+      <mat-card-subtitle class="login-subtitle">Sign in to access your account</mat-card-subtitle>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <form (ngSubmit)="login()" class="login-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>User ID</mat-label>
+          <input matInput [(ngModel)]="userId" name="userId" required placeholder="Enter your user ID">
+          <mat-icon matPrefix>person</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <input matInput type="password" [(ngModel)]="password" name="password" required placeholder="Enter your password">
+          <mat-icon matPrefix>lock</mat-icon>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" type="submit" [disabled]="isLoading" class="login-button">
+          <mat-icon>login</mat-icon>
+          {{ isLoading ? 'Signing in...' : 'Sign In' }}
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div> 
