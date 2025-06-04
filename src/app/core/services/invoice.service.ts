@@ -19,11 +19,16 @@ export interface InvoiceDetailResponse {
     amount: number;
     currency: string;
     items: {
+      POSNR: string;
       MATNR: string;
       ARKTX: string;
-      FKIMG: string;
+      KWMENG: number;
       VRKME: string;
+      NETWR: number;
+      WAERK: string;
     }[];
+    KUNNR: string;
+    VBELN: string;
   };
 }
 

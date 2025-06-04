@@ -62,6 +62,7 @@ router.post('/list', async (req, res) => {
       // Extract the sales list from the SOAP response
       const soapBody = parsedResponse.Envelope.Body;
       const salesResponse = soapBody.ZSSM34_P1_SALESResponse;
+      console.log('salesResponse', salesResponse);
       let salesList = salesResponse.ET_SALES?.item;
 
       // Ensure salesList is always an array

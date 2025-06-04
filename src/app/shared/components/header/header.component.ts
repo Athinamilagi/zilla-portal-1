@@ -24,7 +24,7 @@ import { MatButtonModule } from '@angular/material/button';
         <a routerLink="/deliveries" routerLinkActive="active">Deliveries</a>
         
         <div class="finance-menu">
-          <a routerLinkActive="active">Finance</a>
+          <a routerLink="/finance/overview" routerLinkActive="active">Finance</a>
           <div class="finance-dropdown">
             <a routerLink="/finance/credit-memos" routerLinkActive="active">Credit Memos</a>
             <a routerLink="/finance/debit-memos" routerLinkActive="active">Debit Memos</a>

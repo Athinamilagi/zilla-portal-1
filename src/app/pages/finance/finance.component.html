@@ -1,0 +1,32 @@
+<div class="finance-container">
+  <h1>Sales Analytics</h1>
+
+  <!-- Summary Tiles -->
+  <div class="summary-tiles">
+    <div class="tile">
+      <h3>Total Sales (INR)</h3>
+      <p>{{ totalSalesINR | currency:'INR':'symbol':'1.2-2' }}</p>
+    </div>
+    <div class="tile">
+      <h3>Total Sales (EUR)</h3>
+      <p>{{ totalSalesEUR | currency:'EUR':'symbol':'1.2-2' }}</p>
+    </div>
+    <div class="tile">
+      <h3>Total Sales (USD)</h3>
+      <p>{{ totalSalesUSD | currency:'USD':'symbol':'1.2-2' }}</p>
+    </div>
+    <div class="tile">
+      <h3>Total Orders</h3>
+      <p>{{ totalOrders }}</p>
+    </div>
+  </div>
+  
+  <div class="charts-grid">
+    <div class="chart-container">
+      <canvas id="monthlySalesChart"></canvas>
+    </div>
+    <div class="chart-container">
+      <canvas id="productSalesChart"></canvas>
+    </div>
+  </div>
+</div> 

@@ -13,6 +13,7 @@ const debitMemosRoutes = require('./routes/debit-memos.routes');
 const creditMemosRoutes = require('./routes/credit-memos.routes');
 const paymentsRoutes = require('./routes/payments.routes');
 const invoiceRoutes = require('./routes/invoice.routes');
+const invoiceFormRoutes = require('./routes/invoice-form.routes');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -33,6 +34,7 @@ app.use('/api', debitMemosRoutes);
 app.use('/api', creditMemosRoutes);
 app.use('/api', paymentsRoutes);
 app.use('/api/invoice', invoiceRoutes);
+app.use('/api/invoice-form', invoiceFormRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

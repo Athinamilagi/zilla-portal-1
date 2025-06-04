@@ -1,7 +1,11 @@
 import { Routes } from '@angular/router';
 
 export const FINANCE_ROUTES: Routes = [
-  { path: '', redirectTo: 'invoices', pathMatch: 'full' },
+  { path: '', redirectTo: 'overview', pathMatch: 'full' },
+  {
+    path: 'overview',
+    loadComponent: () => import('../../pages/finance/finance.component').then(m => m.FinanceComponent)
+  },
   {
     path: 'invoices',
     children: [

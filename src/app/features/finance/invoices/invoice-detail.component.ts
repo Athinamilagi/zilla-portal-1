@@ -8,12 +8,26 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { InvoiceService, InvoiceDetailResponse } from '../../../core/services/invoice.service';
+import { InvoiceFormService } from '../../../core/services/invoice-form.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 interface InvoiceItem {
+  POSNR: string;
   MATNR: string;
   ARKTX: string;
-  FKIMG: string;
+  KWMENG: number;
   VRKME: string;
+  NETWR: number;
+  WAERK: string;
+}
+
+interface InvoiceData {
+  date: string;
+  amount: number;
+  currency: string;
+  items: InvoiceItem[];
+  KUNNR: string;
+  VBELN: string;
 }
 
 @Component({
@@ -30,14 +44,19 @@ interface InvoiceItem {
   ],
   template: `
     <mat-card class="invoice-detail-card">
-      <mat-card-header>
-        <button mat-icon-button (click)="goBack()" class="back-button">
-          <mat-icon>arrow_back</mat-icon>
-        </button>
-        <mat-card-title>Invoice Details</mat-card-title>
-      </mat-card-header>
-
       <mat-card-content>
+        <div class="actions-row">
+          <button mat-icon-button (click)="goBack()" class="back-button">
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+          <button mat-raised-button color="primary" class="download-button" (click)="downloadInvoiceForm()" [disabled]="isLoading">
+            <mat-icon>download</mat-icon>
+            Download Invoice Form
+          </button>
+        </div>
+
+        <h2>Invoice Details</h2>
+
         <div *ngIf="!isLoading; else loading">
           <div class="invoice-summary">
             <div class="summary-item">
@@ -47,6 +66,14 @@ interface InvoiceItem {
             <div class="summary-item">
               <span class="label">Total Amount:</span>
               <span class="value">{{ invoiceData?.amount | currency:invoiceData?.currency:'symbol':'1.2-2' }}</span>
+            </div>
+             <div class="summary-item">
+              <span class="label">Customer ID:</span>
+              <span class="value">{{ invoiceData?.KUNNR }}</span>
+            </div>
+             <div class="summary-item">
+              <span class="label">Invoice Number:</span>
+              <span class="value">{{ invoiceData?.VBELN }}</span>
             </div>
           </div>
 
@@ -67,7 +94,13 @@ interface InvoiceItem {
             <!-- Quantity Column -->
             <ng-container matColumnDef="quantity">
               <th mat-header-cell *matHeaderCellDef>Quantity</th>
-              <td mat-cell *matCellDef="let item">{{ item.FKIMG }} {{ item.VRKME }}</td>
+              <td mat-cell *matCellDef="let item">{{ item.KWMENG }} {{ item.VRKME }}</td>
+            </ng-container>
+
+             <!-- Amount Column -->
+            <ng-container matColumnDef="amount">
+              <th mat-header-cell *matHeaderCellDef>Amount</th>
+              <td mat-cell *matCellDef="let item">{{ item.NETWR | currency:item.WAERK:'symbol':'1.2-2' }}</td>
             </ng-container>
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
@@ -83,92 +116,131 @@ interface InvoiceItem {
       </mat-card-content>
     </mat-card>
   `,
-  styles: [`
-    .invoice-detail-card {
-      margin: 20px;
-    }
+  styles: [
+    `
+      .invoice-detail-card {
+        margin: 20px;
+      }
 
-    .back-button {
-      margin-right: 16px;
-    }
+      .actions-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px; /* Space between buttons/title and the summary */
+      }
 
-    .invoice-summary {
-      margin: 20px 0;
-      padding: 20px;
-      background-color: var(--surface-card);
-      border-radius: 4px;
-    }
+      .mat-card-content h2 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        text-align: left;
+      }
 
-    .summary-item {
-      margin-bottom: 10px;
-      display: flex;
-      gap: 10px;
-    }
+      .back-button {
+         margin-right: 16px;
+      }
 
-    .label {
-      font-weight: bold;
-      color: var(--text-color-secondary);
-      min-width: 120px;
-    }
+      .download-button {
+        background-color: #4CAF50 !important; /* Green color with !important */
+        color: white !important;
+      }
 
-    .items-table {
-      width: 100%;
-      margin-top: 20px;
-    }
+      .invoice-summary {
+        margin: 20px 0;
+        padding: 20px;
+        background-color: var(--surface-card);
+        border-radius: 4px;
+      }
 
-    .loading-spinner {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 200px;
-    }
+      .summary-item {
+        margin-bottom: 10px;
+        display: flex;
+        gap: 10px;
+      }
 
-    th.mat-header-cell {
-      font-weight: bold;
-      color: var(--text-color-secondary);
-    }
+      .label {
+        font-weight: bold;
+        color: var(--text-color-secondary);
+        min-width: 120px;
+      }
 
-    td.mat-cell {
-      padding: 16px 8px;
-    }
-  `]
+      .items-table {
+        width: 100%;
+        margin-top: 20px;
+      }
+
+      .loading-spinner {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 200px;
+      }
+
+      th.mat-header-cell {
+        font-weight: bold;
+        color: var(--text-color-secondary);
+      }
+
+      td.mat-cell {
+        padding: 16px 8px;
+      }
+
+       .mat-column-materialNumber {
+        width: 150px;
+      }
+
+      .mat-column-quantity {
+        width: 120px;
+        text-align: right;
+      }
+
+      .mat-column-amount {
+        width: 120px;
+        text-align: right;
+      }
+
+      .mat-column-description {
+        min-width: 300px;
+      }
+    `,
+  ],
 })
 export class InvoiceDetailComponent implements OnInit {
-  invoiceData: {
-    date: string;
-    amount: number;
-    currency: string;
-    items: InvoiceItem[];
-  } | null = null;
-  
-  displayedColumns: string[] = ['materialNumber', 'description', 'quantity'];
-  isLoading = true;
+  invoiceData: InvoiceData | null = null;
+  displayedColumns: string[] = ['materialNumber', 'description', 'quantity', 'amount'];
+  isLoading = false;
+  invoiceNumberFromRoute: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private invoiceService: InvoiceService
+    private invoiceService: InvoiceService,
+    private invoiceFormService: InvoiceFormService,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
     const invoiceNumber = this.route.snapshot.paramMap.get('id');
     if (invoiceNumber) {
+      this.invoiceNumberFromRoute = invoiceNumber; // Store invoice number
       this.loadInvoiceDetails(invoiceNumber);
-    } else {
-      this.goBack();
     }
   }
 
   loadInvoiceDetails(invoiceNumber: string): void {
+    this.isLoading = true;
     this.invoiceService.getInvoiceDetails(invoiceNumber).subscribe({
       next: (response: InvoiceDetailResponse) => {
-        if (response.success) {
+        if (response.success && response.data) {
           this.invoiceData = response.data;
         }
-        this.isLoading = false;
       },
-      error: (error: Error) => {
+      error: (error) => {
         console.error('Error loading invoice details:', error);
+        this.snackBar.open('Error loading invoice details', 'Close', {
+          duration: 3000
+        });
+      },
+      complete: () => {
         this.isLoading = false;
       }
     });
@@ -177,4 +249,58 @@ export class InvoiceDetailComponent implements OnInit {
   goBack(): void {
     this.router.navigate(['/finance/invoices']);
   }
-} 
+
+  downloadInvoiceForm(): void {
+    // Retrieve KUNNR from local storage
+    const customerDataString = localStorage.getItem('customer_data');
+    const salesDocNumber = this.invoiceNumberFromRoute;
+
+    if (!customerDataString || !salesDocNumber) {
+      this.snackBar.open('Customer data or Invoice Number is missing.', 'Close', {
+        duration: 3000
+      });
+      return;
+    }
+
+    let customerId: string | null = null;
+    try {
+      const customerData = JSON.parse(customerDataString);
+      if (customerData && customerData.kunnr) {
+        customerId = customerData.kunnr;
+      } else {
+         this.snackBar.open('Invalid customer data in local storage.', 'Close', {
+            duration: 3000
+          });
+          return;
+      }
+    } catch (e) {
+       console.error('Error parsing customer data from local storage:', e);
+       this.snackBar.open('Error reading customer data.', 'Close', {
+          duration: 3000
+        });
+        return;
+    }
+
+    this.isLoading = true;
+    this.invoiceFormService.getInvoiceForm(
+      customerId!,
+      salesDocNumber
+    ).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          const fileName = `Invoice_${salesDocNumber}.pdf`;
+          this.invoiceFormService.downloadPdf(response.data, fileName);
+        }
+      },
+      error: (error) => {
+        console.error('Error downloading invoice form:', error);
+        this.snackBar.open('Error downloading invoice form', 'Close', {
+          duration: 3000
+        });
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
+    });
+  }
+}

@@ -119,7 +119,7 @@ export class DataService {
     }
   }
 
-  getOrders(): Observable<any[]> {
+   getOrders(): Observable<any[]> {
     const customerData = JSON.parse(localStorage.getItem('customer_data') || '{}');
     let kunnr = customerData.kunnr;
     if (typeof kunnr === 'number') {
