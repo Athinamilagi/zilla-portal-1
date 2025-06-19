@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { DataService, Order } from '../../core/services/data.service';
 import { OrderSummaryComponent } from './order-summary/order-summary.component';
 import { OrderItemsTableComponent } from './order-items-table/order-items-table.component';
@@ -11,7 +12,13 @@ import { FormsModule } from '@angular/forms';
   imports: [CommonModule, FormsModule, OrderSummaryComponent, OrderItemsTableComponent],
   template: `
     <div class="orders-container">
-      <h2 class="page-title">📦 Orders</h2>
+      <div class="header-section">
+        <button class="back-btn" (click)="goBack()">
+          <span class="material-icons">arrow_back</span>
+          Back
+        </button>
+        <h2 class="page-title">📦 Orders</h2>
+      </div>
       <div *ngIf="loading" class="loading">Loading orders...</div>
       <div *ngIf="!loading" class="controls-container">
         <input type="text" [(ngModel)]="searchTerm" (input)="applyFilter()" placeholder="Search orders..." class="search-input" />
@@ -44,7 +51,10 @@ import { FormsModule } from '@angular/forms';
   `,
   styles: [
     `.orders-container { padding: 1.5rem; max-width: 1400px; margin: 0 auto; background-color: #f8fafc; min-height: 100vh; }`,
-    `.page-title { font-size: 1.5rem; font-weight: 600; color: #1e293b; margin-bottom: 1.5rem; }`,
+    `.header-section { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }`,
+    `.back-btn { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: white; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; color: #1e293b; font-size: 0.9rem; }`,
+    `.back-btn:hover { background: #f1f5f9; }`,
+    `.page-title { font-size: 1.5rem; font-weight: 600; color: #1e293b; margin: 0; }`,
     `.orders-grid { display: grid; gap: 2rem; }`,
     `.order-card { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }`,
     `.na-text { color: #64748b; font-style: italic; text-align: right; display: inline-block; width: 100%; }`,
@@ -81,7 +91,7 @@ export class OrdersPageComponent implements OnInit {
     return Math.min(this.startIndex + this.pageSize, this.filteredOrders.length);
   }
 
-  constructor(private dataService: DataService) {}
+  constructor(private dataService: DataService, private router: Router) {}
 
   ngOnInit() {
     this.loading = true;
@@ -108,26 +118,8 @@ export class OrdersPageComponent implements OnInit {
     });
   }
 
-  changePage(page: number): void {
-    this.currentPage = page;
-    this.updatePaginatedOrders();
-  }
-
-  private updatePaginatedOrders(): void {
-    const start = this.startIndex;
-    const end = this.endIndex;
-    this.paginatedOrders = this.filteredOrders.slice(start, end);
-  }
-
-  applyFilter() {
-    this.filteredOrders = this.dataService.filterByTerm(
-      this.orders,
-      this.searchTerm,
-      ['id', 'product']
-    );
-    this.totalPages = Math.ceil(this.filteredOrders.length / this.pageSize);
-    this.currentPage = 1; // Reset to first page when filtering
-    this.updatePaginatedOrders();
+  goBack(): void {
+    this.router.navigate(['/dashboard']);
   }
 
   private removeLeadingZeros(value: string): string {
@@ -161,6 +153,28 @@ export class OrdersPageComponent implements OnInit {
       order.product = order.items.map((i: any) => i.product).join(', ');
     });
     return Object.values(grouped);
+  }
+
+  changePage(page: number): void {
+    this.currentPage = page;
+    this.updatePaginatedOrders();
+  }
+
+  private updatePaginatedOrders(): void {
+    const start = this.startIndex;
+    const end = this.endIndex;
+    this.paginatedOrders = this.filteredOrders.slice(start, end);
+  }
+
+  applyFilter() {
+    this.filteredOrders = this.dataService.filterByTerm(
+      this.orders,
+      this.searchTerm,
+      ['id', 'product']
+    );
+    this.totalPages = Math.ceil(this.filteredOrders.length / this.pageSize);
+    this.currentPage = 1; // Reset to first page when filtering
+    this.updatePaginatedOrders();
   }
 
   private transformOrderData(data: any[]): Order[] {

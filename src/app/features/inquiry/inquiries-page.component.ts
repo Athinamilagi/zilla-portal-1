@@ -1,14 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { DataService } from '../../core/services/data.service';
 import { FormsModule } from '@angular/forms';
+
 @Component({
   selector: 'app-inquiries-page',
   standalone: true,
-  imports: [CommonModule,FormsModule],
+  imports: [CommonModule, FormsModule],
   template: `
     <div class="inquiries-container">
-      <h2 class="page-title">🧾 Your Inquiries</h2>
+      <div class="header-section">
+        <button class="back-btn" (click)="goBack()">
+          <span class="material-icons">arrow_back</span>
+          Back
+        </button>
+        <h2 class="page-title">🧾 Your Inquiries</h2>
+      </div>
       <input type="text" [(ngModel)]="searchTerm" (input)="applyFilter()" placeholder="Search inquiries..." class="search-input" />
       <div *ngIf="loading" class="loading">Loading inquiries...</div>
       <div *ngIf="error" class="error">{{ error }}</div>
@@ -38,11 +46,32 @@ import { FormsModule } from '@angular/forms';
       background: #f8fafc;
       min-height: 100vh;
     }
+    .header-section {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: white;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #1e293b;
+      font-size: 0.9rem;
+    }
+    .back-btn:hover {
+      background: #f1f5f9;
+    }
     .page-title {
       font-size: 2rem;
       font-weight: 700;
       color: #1e293b;
-      margin-bottom: 2rem;
+      margin: 0;
     }
     .loading, .error, .empty {
       text-align: center;
@@ -127,7 +156,7 @@ export class InquiriesPageComponent implements OnInit {
   error: string | null = null;
   loading = false;
 
-  constructor(private dataService: DataService) {}
+  constructor(private dataService: DataService, private router: Router) {}
 
   ngOnInit() {
     this.loading = true;
@@ -149,6 +178,10 @@ export class InquiriesPageComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  goBack(): void {
+    this.router.navigate(['/dashboard']);
   }
 
   applyFilter() {

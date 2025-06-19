@@ -14,7 +14,7 @@ export const FINANCE_ROUTES: Routes = [
         loadComponent: () => import('./invoices/invoices.component').then(m => m.InvoicesComponent)
       },
       {
-        path: ':id',
+        path: ':invoiceNumber',
         loadComponent: () => import('./invoices/invoice-detail.component').then(m => m.InvoiceDetailComponent)
       }
     ]

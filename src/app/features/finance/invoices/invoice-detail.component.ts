@@ -43,81 +43,122 @@ interface InvoiceData {
     MatProgressSpinnerModule
   ],
   template: `
-    <mat-card class="invoice-detail-card">
-      <mat-card-content>
-        <div class="actions-row">
-          <button mat-icon-button (click)="goBack()" class="back-button">
-            <mat-icon>arrow_back</mat-icon>
-          </button>
-          <button mat-raised-button color="primary" class="download-button" (click)="downloadInvoiceForm()" [disabled]="isLoading">
-            <mat-icon>download</mat-icon>
-            Download Invoice Form
-          </button>
-        </div>
-
-        <h2>Invoice Details</h2>
-
-        <div *ngIf="!isLoading; else loading">
-          <div class="invoice-summary">
-            <div class="summary-item">
-              <span class="label">Date:</span>
-              <span class="value">{{ invoiceData?.date | date:'mediumDate' }}</span>
-            </div>
-            <div class="summary-item">
-              <span class="label">Total Amount:</span>
-              <span class="value">{{ invoiceData?.amount | currency:invoiceData?.currency:'symbol':'1.2-2' }}</span>
-            </div>
-             <div class="summary-item">
-              <span class="label">Customer ID:</span>
-              <span class="value">{{ invoiceData?.KUNNR }}</span>
-            </div>
-             <div class="summary-item">
-              <span class="label">Invoice Number:</span>
-              <span class="value">{{ invoiceData?.VBELN }}</span>
-            </div>
+    <div class="invoice-detail-container">
+      <div class="header-section">
+        <button class="back-btn" (click)="goBack()">
+          <span class="material-icons">arrow_back</span>
+          Back
+        </button>
+        <h2 class="page-title">Invoice Details</h2>
+      </div>
+      <mat-card class="invoice-detail-card">
+        <mat-card-content>
+          <div class="actions-row">
+            <button mat-raised-button color="primary" class="download-button" (click)="downloadInvoiceForm()" [disabled]="isLoading">
+              <mat-icon>download</mat-icon>
+              Download Invoice Form
+            </button>
           </div>
 
-          <h3>Items</h3>
-          <table mat-table [dataSource]="invoiceData?.items || []" class="items-table">
-            <!-- Material Number Column -->
-            <ng-container matColumnDef="materialNumber">
-              <th mat-header-cell *matHeaderCellDef>Material Number</th>
-              <td mat-cell *matCellDef="let item">{{ item.MATNR }}</td>
-            </ng-container>
+          <h2>Invoice Details</h2>
 
-            <!-- Description Column -->
-            <ng-container matColumnDef="description">
-              <th mat-header-cell *matHeaderCellDef>Description</th>
-              <td mat-cell *matCellDef="let item">{{ item.ARKTX }}</td>
-            </ng-container>
+          <div *ngIf="!isLoading; else loading">
+            <div class="invoice-summary">
+              <div class="summary-item">
+                <span class="label">Date:</span>
+                <span class="value">{{ invoiceData?.date | date:'mediumDate' }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="label">Total Amount:</span>
+                <span class="value">{{ invoiceData?.amount | currency:invoiceData?.currency:'symbol':'1.2-2' }}</span>
+              </div>
+               <div class="summary-item">
+                <span class="label">Customer ID:</span>
+                <span class="value">{{ invoiceData?.KUNNR }}</span>
+              </div>
+               <div class="summary-item">
+                <span class="label">Invoice Number:</span>
+                <span class="value">{{ invoiceData?.VBELN }}</span>
+              </div>
+            </div>
 
-            <!-- Quantity Column -->
-            <ng-container matColumnDef="quantity">
-              <th mat-header-cell *matHeaderCellDef>Quantity</th>
-              <td mat-cell *matCellDef="let item">{{ item.KWMENG }} {{ item.VRKME }}</td>
-            </ng-container>
+            <h3>Items</h3>
+            <table mat-table [dataSource]="invoiceData?.items || []" class="items-table">
+              <!-- Material Number Column -->
+              <ng-container matColumnDef="materialNumber">
+                <th mat-header-cell *matHeaderCellDef>Material Number</th>
+                <td mat-cell *matCellDef="let item">{{ item.MATNR }}</td>
+              </ng-container>
 
-             <!-- Amount Column -->
-            <ng-container matColumnDef="amount">
-              <th mat-header-cell *matHeaderCellDef>Amount</th>
-              <td mat-cell *matCellDef="let item">{{ item.NETWR | currency:item.WAERK:'symbol':'1.2-2' }}</td>
-            </ng-container>
+              <!-- Description Column -->
+              <ng-container matColumnDef="description">
+                <th mat-header-cell *matHeaderCellDef>Description</th>
+                <td mat-cell *matCellDef="let item">{{ item.ARKTX }}</td>
+              </ng-container>
 
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-          </table>
-        </div>
+              <!-- Quantity Column -->
+              <ng-container matColumnDef="quantity">
+                <th mat-header-cell *matHeaderCellDef>Quantity</th>
+                <td mat-cell *matCellDef="let item">{{ item.KWMENG }} {{ item.VRKME }}</td>
+              </ng-container>
 
-        <ng-template #loading>
-          <div class="loading-spinner">
-            <mat-spinner diameter="50"></mat-spinner>
+               <!-- Amount Column -->
+              <ng-container matColumnDef="amount">
+                <th mat-header-cell *matHeaderCellDef>Amount</th>
+                <td mat-cell *matCellDef="let item">{{ item.NETWR | currency:item.WAERK:'symbol':'1.2-2' }}</td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+            </table>
           </div>
-        </ng-template>
-      </mat-card-content>
-    </mat-card>
+
+          <ng-template #loading>
+            <div class="loading-spinner">
+              <mat-spinner diameter="50"></mat-spinner>
+            </div>
+          </ng-template>
+        </mat-card-content>
+      </mat-card>
+    </div>
   `,
   styles: [
     `
+      .invoice-detail-container {
+        padding: 20px;
+      }
+
+      .header-section {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .back-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: white;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        cursor: pointer;
+        color: #1e293b;
+        font-size: 0.9rem;
+      }
+
+      .back-btn:hover {
+        background: #f1f5f9;
+      }
+
+      .page-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin: 0;
+      }
+
       .invoice-detail-card {
         margin: 20px;
       }
@@ -206,6 +247,7 @@ interface InvoiceData {
 })
 export class InvoiceDetailComponent implements OnInit {
   invoiceData: InvoiceData | null = null;
+  customerData: string = '';
   displayedColumns: string[] = ['materialNumber', 'description', 'quantity', 'amount'];
   isLoading = false;
   invoiceNumberFromRoute: string | null = null;
@@ -219,19 +261,25 @@ export class InvoiceDetailComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const invoiceNumber = this.route.snapshot.paramMap.get('id');
-    if (invoiceNumber) {
-      this.invoiceNumberFromRoute = invoiceNumber; // Store invoice number
-      this.loadInvoiceDetails(invoiceNumber);
-    }
+    this.route.params.subscribe(params => {
+      this.invoiceNumberFromRoute = params['invoiceNumber'];
+      console.log(this.invoiceNumberFromRoute)
+      this.loadInvoiceDetails();
+    });
   }
 
-  loadInvoiceDetails(invoiceNumber: string): void {
+  goBack(): void {
+    this.router.navigate(['/finance/invoices']);
+  }
+
+  loadInvoiceDetails(): void {
     this.isLoading = true;
-    this.invoiceService.getInvoiceDetails(invoiceNumber).subscribe({
+    this.invoiceService.getInvoiceDetails(this.invoiceNumberFromRoute!).subscribe({
       next: (response: InvoiceDetailResponse) => {
         if (response.success && response.data) {
           this.invoiceData = response.data;
+          this.invoiceData.KUNNR = JSON.parse(this.customerData).kunnr || "";
+          console.log(this.invoiceData.KUNNR)
         }
       },
       error: (error) => {
@@ -244,10 +292,6 @@ export class InvoiceDetailComponent implements OnInit {
         this.isLoading = false;
       }
     });
-  }
-
-  goBack(): void {
-    this.router.navigate(['/finance/invoices']);
   }
 
   downloadInvoiceForm(): void {

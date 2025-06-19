@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DataService } from '../../../core/services/data.service';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 interface CreditMemo {
   id: string;
@@ -19,17 +20,22 @@ interface CreditMemo {
   imports: [CommonModule, FormsModule],
   template: `
     <div class="credit-memos-container">
-      <div class="header">
-        <h2>💰 Credit Memos</h2>
-        <div class="search-container">
-          <input 
-            type="text" 
-            [(ngModel)]="searchTerm" 
-            (input)="applyFilter()" 
-            placeholder="Search by ID, reference or description..." 
-            class="search-input"
-          />
-        </div>
+      <div class="header-section">
+        <button class="back-btn" (click)="goBack()">
+          <span class="material-icons">arrow_back</span>
+          Back
+        </button>
+        <h2 class="page-title">Credit Memos</h2>
+      </div>
+
+      <div class="search-container">
+        <input 
+          type="text" 
+          [(ngModel)]="searchTerm" 
+          (input)="applyFilter()" 
+          placeholder="Search by ID, reference or description..." 
+          class="search-input"
+        />
       </div>
 
       <div class="loading-container" *ngIf="loading">
@@ -83,24 +89,35 @@ interface CreditMemo {
       background-color: var(--surface-ground, #f8f9fa);
     }
 
-    .header {
+    .header-section {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 2rem;
-      background-color: white;
-      padding: 1rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
     }
 
-    h2 {
-      font-size: 1.5rem;
-      color: var(--text-primary);
-      margin: 0;
+    .back-btn {
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: white;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #1e293b;
+      font-size: 0.9rem;
+    }
+
+    .back-btn:hover {
+      background: #f1f5f9;
+    }
+
+    .page-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin: 0;
     }
 
     .search-container {
@@ -286,7 +303,7 @@ interface CreditMemo {
         padding: 1rem;
       }
 
-      .header {
+      .header-section {
         flex-direction: column;
         gap: 1rem;
       }
@@ -308,7 +325,7 @@ export class CreditMemosComponent implements OnInit {
   loading: boolean = true;
   error: string | null = null;
 
-  constructor(private dataService: DataService) {}
+  constructor(private dataService: DataService, private router: Router) {}
 
   ngOnInit(): void {
     this.loadCreditMemos();
@@ -374,5 +391,13 @@ export class CreditMemosComponent implements OnInit {
       style: 'currency',
       currency: currency || 'INR'
     }).format(amount);
+  }
+
+  getCountByStatus(status: string): number {
+    return this.creditMemos.filter(memo => memo.status === status).length;
+  }
+
+  goBack(): void {
+    this.router.navigate(['/finance']);
   }
 }

@@ -27,47 +27,56 @@ interface Invoice {
     MatCardModule
   ],
   template: `
-    <mat-card class="invoice-card">
-      <mat-card-header>
-        <mat-card-title>Invoices</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="table-container" *ngIf="!isLoading; else loading">
-          <table mat-table [dataSource]="invoices" matSort (matSortChange)="sortData($event)" class="invoice-table">
-            <!-- Invoice Number Column -->
-            <ng-container matColumnDef="invoiceNumber">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Invoice Number</th>
-              <td mat-cell *matCellDef="let invoice">{{ invoice.invoiceNumber }}</td>
-            </ng-container>
+    <div class="invoices-container">
+      <div class="header-section">
+        <button class="back-btn" (click)="goBack()">
+          <span class="material-icons">arrow_back</span>
+          Back
+        </button>
+        <h2 class="page-title">🧾 Invoices</h2>
+      </div>
+      <mat-card class="invoice-card">
+        <mat-card-header>
+          <mat-card-title>Invoices</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="table-container" *ngIf="!isLoading; else loading">
+            <table mat-table [dataSource]="invoices" matSort (matSortChange)="sortData($event)" class="invoice-table">
+              <!-- Invoice Number Column -->
+              <ng-container matColumnDef="invoiceNumber">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Invoice Number</th>
+                <td mat-cell *matCellDef="let invoice">{{ invoice.invoiceNumber }}</td>
+              </ng-container>
 
-            <!-- Date Column -->
-            <ng-container matColumnDef="date">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
-              <td mat-cell *matCellDef="let invoice">{{ invoice.date | date:'mediumDate' }}</td>
-            </ng-container>
+              <!-- Date Column -->
+              <ng-container matColumnDef="date">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+                <td mat-cell *matCellDef="let invoice">{{ invoice.date | date:'mediumDate' }}</td>
+              </ng-container>
 
-            <!-- Amount Column -->
-            <ng-container matColumnDef="amount">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Amount</th>
-              <td mat-cell *matCellDef="let invoice">
-                {{ invoice.amount | currency:invoice.currency:'symbol':'1.2-2' }}
-              </td>
-            </ng-container>
+              <!-- Amount Column -->
+              <ng-container matColumnDef="amount">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Amount</th>
+                <td mat-cell *matCellDef="let invoice">
+                  {{ invoice.amount | currency:invoice.currency:'symbol':'1.2-2' }}
+                </td>
+              </ng-container>
 
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns"
-                (click)="viewInvoiceDetails(row.invoiceNumber)"
-                class="invoice-row"></tr>
-          </table>
-        </div>
-
-        <ng-template #loading>
-          <div class="loading-spinner">
-            <mat-spinner diameter="50"></mat-spinner>
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns"
+                  (click)="viewInvoiceDetails(row.invoiceNumber)"
+                  class="invoice-row"></tr>
+            </table>
           </div>
-        </ng-template>
-      </mat-card-content>
-    </mat-card>
+
+          <ng-template #loading>
+            <div class="loading-spinner">
+              <mat-spinner diameter="50"></mat-spinner>
+            </div>
+          </ng-template>
+        </mat-card-content>
+      </mat-card>
+    </div>
   `,
   styles: [`
     .invoice-card {
@@ -109,6 +118,11 @@ interface Invoice {
     td.mat-cell {
       padding: 16px 8px;
     }
+
+    .header-section { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+    .back-btn { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: white; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer; color: #1e293b; font-size: 0.9rem; }
+    .back-btn:hover { background: #f1f5f9; }
+    .page-title { font-size: 1.5rem; font-weight: 600; color: #1e293b; margin: 0; }
   `]
 })
 export class InvoicesComponent implements OnInit {
@@ -165,5 +179,9 @@ export class InvoicesComponent implements OnInit {
 
   viewInvoiceDetails(invoiceNumber: string): void {
     this.router.navigate(['/finance/invoices', invoiceNumber]);
+  }
+
+  goBack(): void {
+    this.router.navigate(['/finance']);
   }
 }
